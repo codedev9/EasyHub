@@ -1,2 +1,3 @@
 # ScriptHub
-# its a hub.
+This is my hub, yes
+lol
