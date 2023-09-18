@@ -1,10 +1,16 @@
-
----------------------------------------
+--// Updates
+-- [+] Added BowAimbot
+-- [+] Rewrote Keybind System
+--// Future Updates
+-- [-] Customize keybinds in game
+-- [-] Rewrite TPAura and KillAura
+-------------------------------------------
 local TPAura = false
 local KillAura = false
 local InfiniteAura = false
 local Speed = false
 local EasyHub = false
+local BowAimbot = false
 ----------------------------------------
 local User = "CoderMatt1" -- Type in your name
 local TPAuraSettings = {
@@ -12,24 +18,42 @@ local TPAuraSettings = {
    ["Distance"] = 10, -- Max Disance for damage
    ["AttackDelay"] = 1 -- Time between an Attack
 }
-----------------------------------------------
 local KillAuraSettings = {
     ["Damage"] = 20, -- Damage (not based on sword)
     ["MaxDistance"] = 10 -- Distance for a attack to work
 }
+local BowAimbotSettings = {
+   ["Range"] = 10,
+   ["OnlyPlayers"] = true
+}
 ---------------------------------------------
 local function loadHub(player) -- Don't Touch This 
     MessageService.sendInfo(player, "Welcome To EasyHub!")
-    wait(0.5)
+    task.wait(0.5)
     MessageService.sendInfo(player, "TPAura: Press G To Toggle")
-    wait(0.5)
+    task.wait(0.5)
     MessageService.sendInfo(player, "KillAura: Press Y to Toggle")
-    wait(0.5)
+    task.wait(0.5)
     MessageService.sendInfo(player, "InfiniteAura: Press V to toggle")
-    wait(0.5)
+    task.wait(0.5)
     MessageService.sendInfo(player, "Speed: Press R to Toggle")
+task.wait(0.5)
+   MessageService.sendInfo(player, "BowAimbot: Press H to Toggle")
 end
 -------------------------------------------------
+--// KeyBinds //--
+-- New Feature!
+-- To Use Change the letters where it says KeyCode and thenyour keybind that you want
+local TPAuraKey = KeyCode.G
+local KillAuraKey = KeyCode.Y 
+local SpeedKey = KeyCode.V
+local InfiniteAuraKey = KeyCode.R
+--// Customize Keybinds //--
+-- Beta Feature
+-- Allows you to customize the settings of each hack
+--// Coming Soon! //--
+-------------------------------------------------
+InputService.registerInputBegan
 Events.PlayerChatted(function (event)
     if event.player.name == User then
         if event.message == "/hub activate" then
@@ -37,7 +61,7 @@ Events.PlayerChatted(function (event)
         end
     end
 end)
-InputService.registerInputBegan(KeyCode.G, function (player)
+InputService.registerInputBegan(TPAuraKey, function (player)
     if player.name == User and EasyHub == true then
         if TPAura == false then
             MessageService(player, "Set TPAura to True")
@@ -46,7 +70,7 @@ InputService.registerInputBegan(KeyCode.G, function (player)
         end
     end
 end)
-InputService.registerInputBegan(KeyCode.Y, function (player)
+InputService.registerInputBegan(KillAuraKey, function (player)
     if player.name == User and EasyHub == true then
         if KillAura == false then
             MessageService(player, "Set KillAura to True")
@@ -55,7 +79,7 @@ InputService.registerInputBegan(KeyCode.Y, function (player)
         end
     end
 end)
-InputService.registerInputBegan(KeyCode.V, function (player)
+InputService.registerInputBegan(InfiniteAuraKey, function (player)
     if player.name == User and EasyHub == true then
         if InfiniteAura == false then
             MessageService(player, "Set InfiniteAura to True")
@@ -64,7 +88,7 @@ InputService.registerInputBegan(KeyCode.V, function (player)
         end
     end
 end)
-InputService.registerInputBegan(KeyCode.R, function (player)
+InputService.registerInputBegan(SpeedKey, function (player)
     if player.name == User and EasyHub == true then
         if Speed == false then
             MessageService(player, "Set Speed to True")
@@ -78,12 +102,9 @@ end)
 --// TPAura
 Events.WeaponSwing(function (event)
     local entity = event.player.getEntity(event.player).getPosition(event.player).Unit
-    local plrsAround = PlayerService.getNearbyPlayers(entity, 10)
-    local PlayersInServer = PlayerService.getPlayers()
+    local plrsAround = PlayerService.getNearbyPlayers(entity, TPAuraSettings["Distance"])
     local Players = {}
     if plrsAround and EasyHub == true then
-        local plr = PlayersInServer
-        Players[plrsAround] = true
         repeat
              task.wait(TPAuraSettings["AttackDelay"])
              CombatService.damage(plrsAround, TPAuraSettings["Damage"])
@@ -120,4 +141,10 @@ Events.EntitySpawn(function (event)
     elseif not plr.isAlive(plr) then
         plr.getPlayer(plr).removeSpeedMultiplier(plr, "2")
     end
+end)
+--// BowAimbot
+Events.ProjectileLaunched(function (event)
+    local lplr = event.shooter.getPlayer(event.shooter)
+    local plrPos = event.position
+    local plrs2 = PlayerService.getNearbyPlayers(plrPos(), 10)
 end)
